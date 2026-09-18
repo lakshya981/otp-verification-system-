@@ -92,18 +92,3 @@ mvn test
 
 ---
 
-## Before You Put This on Your Resume or Talk About It in an Interview
-
-Be ready to explain, in your own words:
-
-1. **Why hash the OTP instead of storing it in plain text?** (Same reasoning as password storage — if the database is ever compromised, raw OTPs shouldn't be readable)
-2. **Why `SecureRandom` instead of `Math.random()`?** (`Math.random()` is not cryptographically secure and its output can be predicted; `SecureRandom` is designed for security-sensitive randomness)
-3. **Why the resend cooldown and attempt limit exist** — both protect against abuse: cooldown prevents SMS-bombing/cost abuse, attempt limit prevents brute-forcing a 6-digit code (1 million possibilities is not that many for an unthrottled automated attacker)
-4. **What "E.164 format" means** for phone numbers, and why validating it matters before ever calling an external SMS API
-5. **What happens end-to-end** when `/api/otp/send` is called: cooldown check → generate OTP → hash it → save record with expiry → call `SmsService` → Twilio (or console log in dev mode)
-6. **Why Twilio is optional/toggleable** here too — so the app is demoable and testable without needing a funded account, and a third-party outage doesn't break the whole verification flow untestably
-7. **What a circuit breaker is and why it exists** — protects your app from a struggling external dependency by "failing fast" instead of letting every request hang or retry forever
-8. **The difference between Retry and Circuit Breaker** — Retry handles a single transient failure; Circuit Breaker handles sustained failure by temporarily stopping calls altogether
-9. **Why the retry queue is a meaningful design choice** — a failed SMS isn't just dropped, it's retried later, and you should be able to name the trade-off that it's in-memory (lost on restart) rather than a durable queue
-
-If you can answer these clearly, this project — combined with the real-time chat app — shows real-time systems knowledge, secure backend API design, AND resilience engineering, which directly maps to language in Twilio's own internship JD about "solving resiliency, latency and quality challenges."
